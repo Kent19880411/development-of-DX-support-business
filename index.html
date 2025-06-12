@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         /* グローバルスタイル */
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Noto Sans JP', sans-serif;
             margin: 0;
@@ -25,22 +28,23 @@
             background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            padding: 10px 20px;
+            padding: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* 小さい画面で折り返すように変更 */
         }
         .navbar a {
             text-decoration: none;
             color: #374151;
-            padding: 8px 12px;
+            padding: 6px 10px;
             margin: 4px;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             transition: all 0.3s ease;
+            white-space: nowrap; /* テキストが改行しないように */
         }
         .navbar a:hover, .navbar a.active {
             background-color: #4285F4;
@@ -49,15 +53,18 @@
         
         /* スライドの基本コンテナ */
         .slide-wrapper {
-            padding-top: 80px; /* Adjust based on navbar height */
+            padding-top: 100px; /* ナビゲーションバーの高さに応じて調整 */
             display: flex;
             justify-content: center;
             align-items: center;
             padding-bottom: 40px;
-            min-height: 100vh;
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
         .slide-container {
-            width: 1280px;
+            /* PCでの最大幅は1280px、それ以下では画面幅に追従 */
+            max-width: 1280px;
+            width: 100%;
             min-height: 720px;
             position: relative;
             overflow: hidden;
@@ -65,27 +72,24 @@
             border-radius: 8px;
         }
 
-        /* スライド1のスタイル */
-        .slide-1 .gradient-bg {
-            background: linear-gradient(135deg, #4285F4 0%, #0F9D58 100%);
-            opacity: 0.95;
-        }
-        .slide-1 .google-dots {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%),
-                        radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%);
-            background-size: 30px 30px;
-            background-position: 0 0, 15px 15px;
-            transform: rotate(15deg);
-        }
-        .slide-1 .title-text {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        /* スマートフォンなどの小さい画面向けの調整 */
+        @media (max-width: 768px) {
+            .slide-container {
+                min-height: auto; /* 高さを自動調整 */
+                height: auto;
+            }
+            .slide-header h1 {
+                font-size: 1.5rem; /* 24px */
+            }
+             .slide-wrapper {
+                padding-top: 140px; /* 折り返したナビゲーションバーの高さに対応 */
+            }
         }
 
-        /* スライド2のスタイル */
+        /* 各スライドに固有のスタイル（変更なし） */
+        .slide-1 .gradient-bg { background: linear-gradient(135deg, #4285F4 0%, #0F9D58 100%); opacity: 0.95; }
+        .slide-1 .google-dots { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%), radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%); background-size: 30px 30px; background-position: 0 0, 15px 15px; transform: rotate(15deg); }
+        .slide-1 .title-text { text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .slide-2 .phase-box { border-radius: 8px; transition: all 0.3s ease; }
         .slide-2 .phase-1 { background-color: rgba(66, 133, 244, 0.1); border-left: 5px solid #4285F4; }
         .slide-2 .phase-2 { background-color: rgba(15, 157, 88, 0.1); border-left: 5px solid #0F9D58; }
@@ -96,9 +100,6 @@
         .slide-2 .dot-2 { background-color: #0F9D58; }
         .slide-2 .dot-3 { background-color: #F4B400; }
         .slide-2 .dot-4 { background-color: #DB4437; }
-        .slide-2 .slide-header { border-bottom: 1px solid #E5E7EB; }
-
-        /* スライド3のスタイル */
         .slide-3 .activity-box { border-radius: 12px; transition: all 0.3s ease; overflow: hidden; }
         .slide-3 .activity-header { padding: 15px; color: white; }
         .slide-3 .activity-content { padding: 15px; background-color: white; }
@@ -108,34 +109,23 @@
         .slide-3 .service-header { background-color: #0F9D58; }
         .slide-3 .marketing-box { border: 1px solid #F4B400; }
         .slide-3 .marketing-header { background-color: #F4B400; }
-        .slide-3 .slide-header { border-bottom: 1px solid #E5E7EB; }
         .slide-3 .feature-item { display: flex; align-items: center; margin-bottom: 8px; }
         .slide-3 .feature-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
-
-        /* スライド4のスタイル */
-        .slide-4 .slide-header { border-bottom: 1px solid #E5E7EB; }
         .slide-4 .task-category { border-radius: 8px; transition: all 0.3s ease; }
         .slide-4 .partner-category { background-color: rgba(66, 133, 244, 0.05); border-left: 4px solid #4285F4; }
         .slide-4 .service-category { background-color: rgba(15, 157, 88, 0.05); border-left: 4px solid #0F9D58; }
         .slide-4 .marketing-category { background-color: rgba(244, 180, 0, 0.05); border-left: 4px solid #F4B400; }
-        .slide-4 .task-item { transition: all 0.2s ease; }
         .slide-4 .task-item:hover { background-color: rgba(0, 0, 0, 0.02); }
         .slide-4 .task-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         .slide-4 .partner-icon { background-color: rgba(66, 133, 244, 0.1); color: #4285F4; }
         .slide-4 .service-icon { background-color: rgba(15, 157, 88, 0.1); color: #0F9D58; }
         .slide-4 .marketing-icon { background-color: rgba(244, 180, 0, 0.1); color: #F4B400; }
-
-        /* スライド5のスタイル */
         .slide-5 .phase-box { border-radius: 8px; transition: all 0.3s ease; }
         .slide-5 .marketing-box { background-color: rgba(15, 157, 88, 0.1); border-left: 5px solid #0F9D58; }
         .slide-5 .acquisition-box { background-color: rgba(244, 180, 0, 0.1); border-left: 5px solid #F4B400; }
         .slide-5 .process-box { border-radius: 8px; padding: 12px; text-align: center; transition: all 0.2s ease; }
         .slide-5 .process-box:hover { transform: translateY(-3px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
         .slide-5 .process-arrow { color: #0F9D58; font-size: 24px; }
-        .slide-5 .slide-header { border-bottom: 1px solid #E5E7EB; }
-
-        /* スライド6のスタイル */
-        .slide-6 .slide-header { border-bottom: 1px solid #E5E7EB; }
         .slide-6 .task-category { border-radius: 8px; transition: all 0.3s ease; }
         .slide-6 .marketing-category { background-color: rgba(244, 180, 0, 0.05); border-left: 4px solid #F4B400; }
         .slide-6 .acquisition-category { background-color: rgba(219, 68, 55, 0.05); border-left: 4px solid #DB4437; }
@@ -143,31 +133,24 @@
         .slide-6 .task-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         .slide-6 .marketing-icon { background-color: rgba(244, 180, 0, 0.1); color: #F4B400; }
         .slide-6 .acquisition-icon { background-color: rgba(219, 68, 55, 0.1); color: #DB4437; }
-        
-        /* スライド7のスタイル */
         .slide-7 .phase-box { border-radius: 8px; transition: all 0.3s ease; }
         .slide-7 .phase-3a { background-color: rgba(244, 180, 0, 0.1); border-left: 5px solid #F4B400; }
         .slide-7 .phase-3b { background-color: rgba(219, 68, 55, 0.1); border-left: 5px solid #DB4437; }
         .slide-7 .strategy-card { transition: all 0.3s ease; border-radius: 8px; }
         .slide-7 .strategy-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .slide-7 .circle-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .slide-7 .slide-header { border-bottom: 1px solid #E5E7EB; }
-
-        /* スライド8のスタイル */
-        .slide-8 .slide-header { border-bottom: 1px solid #E5E7EB; }
         .slide-8 .schedule-item { position: relative; }
         .slide-8 .schedule-line { position: absolute; top: 20px; left: 18px; bottom: -10px; width: 2px; background-color: #E5E7EB; z-index: 0; }
         .slide-8 .schedule-item:last-child .schedule-line { display: none; }
         .slide-8 .schedule-dot { position: relative; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1; }
         .slide-8 .success-factor { transition: all 0.2s ease; border-left: 4px solid #4285F4; }
         .slide-8 .success-factor:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .slide-8 .action-item { transition: all 0.2s ease; }
         .slide-8 .action-item:hover { background-color: rgba(0, 0, 0, 0.02); }
         .slide-8 .phase-1-color { color: #4285F4; background-color: rgba(66, 133, 244, 0.1); }
         .slide-8 .phase-2-color { color: #0F9D58; background-color: rgba(15, 157, 88, 0.1); }
         .slide-8 .phase-3-color { color: #F4B400; background-color: rgba(244, 180, 0, 0.1); }
         .slide-8 .expansion-color { color: #DB4437; background-color: rgba(219, 68, 55, 0.1); }
-
+        .slide-header, .task-icon, .action-item, .schedule-item { border-bottom-color: #E5E7EB; }
     </style>
 </head>
 <body>
@@ -185,19 +168,19 @@
 
     <section id="slide-1" class="slide-wrapper slide-1">
         <div class="slide-container gradient-bg flex flex-col justify-center items-center">
-            <div class="google-dots opacity-20 top-0 right-0"></div>
-            <div class="google-dots opacity-20 bottom-0 left-0"></div>
-            <div class="z-10 text-center px-20">
+            <div class="google-dots opacity-20 top-0 right-0 hidden md:block"></div>
+            <div class="google-dots opacity-20 bottom-0 left-0 hidden md:block"></div>
+            <div class="z-10 text-center px-6 md:px-20">
                 <div class="flex justify-center mb-8 space-x-4">
                     <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center shadow-lg"><i class="fas fa-file-alt text-white text-2xl"></i></div>
                     <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center shadow-lg"><i class="fas fa-table text-white text-2xl"></i></div>
                     <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center shadow-lg"><i class="fas fa-chart-bar text-white text-2xl"></i></div>
                     <div class="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center shadow-lg"><i class="fas fa-envelope text-white text-2xl"></i></div>
                 </div>
-                <h1 class="title-text text-5xl font-bold text-white mb-6">Google Workspace事業開発計画</h1>
-                <h2 class="text-2xl font-medium text-white mb-10">ビジネス価値創出のための3フェーズアプローチ</h2>
+                <h1 class="title-text text-3xl md:text-5xl font-bold text-white mb-6">Google Workspace事業開発計画</h1>
+                <h2 class="text-xl md:text-2xl font-medium text-white mb-10">ビジネス価値創出のための3フェーズアプローチ</h2>
                 <div class="w-24 h-1 bg-white mx-auto mb-10 opacity-70"></div>
-                <p class="text-white text-xl leading-relaxed max-w-4xl">
+                <p class="text-white text-lg md:text-xl leading-relaxed max-w-4xl">
                     本資料では、Google Workspace販売代理店契約を基盤に、<br>
                     3つのフェーズに分けた事業開発計画と各段階の具体的タスクについて説明します。
                 </p>
@@ -210,124 +193,72 @@
 
     <section id="slide-2" class="slide-wrapper slide-2">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
                 <h1 class="text-3xl font-bold text-gray-800">事業開発全体概要</h1>
             </div>
-            <div class="flex p-8">
-                <div class="w-1/2 pr-8 pt-4">
-                    <p class="text-lg text-gray-700 mb-8">
+            <div class="flex flex-col md:flex-row p-4 md:p-8">
+                <div class="w-full md:w-1/2 md:pr-8 pt-4 mb-8 md:mb-0">
+                    <p class="text-base md:text-lg text-gray-700 mb-8">
                         本事業開発は3つのフェーズで進行します。各フェーズの目的と活動を段階的に発展させることで、効率的な事業立ち上げを実現します。
                     </p>
                     <div class="space-y-6">
-                        <div class="phase-box phase-1 p-4">
-                            <h3 class="font-bold text-lg text-blue-700">フェーズ1：事業基盤構築</h3>
-                            <p class="text-gray-700">パートナーシップ確立、サービス・組織体制の構築、マーケティング準備</p>
-                        </div>
-                        <div class="phase-box phase-2 p-4">
-                            <h3 class="font-bold text-lg text-green-700">フェーズ2：テストマーケティング・初期案件獲得</h3>
-                            <p class="text-gray-700">既存顧客へのアプローチ、AI研修実施、個別相談会、初期案件獲得</p>
-                        </div>
-                        <div class="phase-box phase-3 p-4">
-                            <h3 class="font-bold text-lg text-yellow-700">フェーズ3：事業本格展開・拡大</h3>
-                            <p class="text-gray-700">事業運営の本格化、定期レビュー、マーケティング拡大、導入事例創出</p>
-                        </div>
+                        <div class="phase-box phase-1 p-4"><h3 class="font-bold text-lg text-blue-700">フェーズ1：事業基盤構築</h3><p class="text-gray-700 text-sm md:text-base">パートナーシップ確立、サービス・組織体制の構築、マーケティング準備</p></div>
+                        <div class="phase-box phase-2 p-4"><h3 class="font-bold text-lg text-green-700">フェーズ2：テストマーケティング・初期案件獲得</h3><p class="text-gray-700 text-sm md:text-base">既存顧客へのアプローチ、AI研修実施、個別相談会、初期案件獲得</p></div>
+                        <div class="phase-box phase-3 p-4"><h3 class="font-bold text-lg text-yellow-700">フェーズ3：事業本格展開・拡大</h3><p class="text-gray-700 text-sm md:text-base">事業運営の本格化、定期レビュー、マーケティング拡大、導入事例創出</p></div>
                     </div>
                 </div>
-                <div class="w-1/2 pl-8 flex flex-col justify-center">
-                    <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+                <div class="w-full md:w-1/2 md:pl-8 flex flex-col justify-center">
+                    <div class="bg-gray-50 rounded-lg p-4 md:p-6 shadow-md">
                         <h3 class="text-lg font-semibold text-gray-800 mb-6 text-center">事業開発タイムライン</h3>
                         <div class="relative mb-10">
                             <div class="timeline-arrow absolute w-full top-3"></div>
                             <div class="flex justify-between relative">
-                                <div class="text-center">
-                                    <div class="timeline-dot dot-1 mx-auto shadow-md"></div>
-                                    <p class="mt-2 text-sm font-medium">開始</p>
-                                    <p class="text-xs text-gray-500">1-2ヶ月目</p>
-                                </div>
-                                <div class="text-center">
-                                    <div class="timeline-dot dot-2 mx-auto shadow-md"></div>
-                                    <p class="mt-2 text-sm font-medium">フェーズ2開始</p>
-                                    <p class="text-xs text-gray-500">3-4ヶ月目</p>
-                                </div>
-                                <div class="text-center">
-                                    <div class="timeline-dot dot-3 mx-auto shadow-md"></div>
-                                    <p class="mt-2 text-sm font-medium">フェーズ3開始</p>
-                                    <p class="text-xs text-gray-500">6-7ヶ月目</p>
-                                </div>
-                                <div class="text-center">
-                                    <div class="timeline-dot dot-4 mx-auto shadow-md"></div>
-                                    <p class="mt-2 text-sm font-medium">事業安定化</p>
-                                    <p class="text-xs text-gray-500">12ヶ月目〜</p>
-                                </div>
+                                <div class="text-center"><div class="timeline-dot dot-1 mx-auto shadow-md"></div><p class="mt-2 text-xs md:text-sm font-medium">開始</p><p class="text-xs text-gray-500">1-2ヶ月</p></div>
+                                <div class="text-center"><div class="timeline-dot dot-2 mx-auto shadow-md"></div><p class="mt-2 text-xs md:text-sm font-medium">フェーズ2</p><p class="text-xs text-gray-500">3-4ヶ月</p></div>
+                                <div class="text-center"><div class="timeline-dot dot-3 mx-auto shadow-md"></div><p class="mt-2 text-xs md:text-sm font-medium">フェーズ3</p><p class="text-xs text-gray-500">6-7ヶ月</p></div>
+                                <div class="text-center"><div class="timeline-dot dot-4 mx-auto shadow-md"></div><p class="mt-2 text-xs md:text-sm font-medium">安定化</p><p class="text-xs text-gray-500">12ヶ月〜</p></div>
                             </div>
                         </div>
-                        <div class="flex justify-center">
+                        <div class="flex justify-center scale-90 md:scale-100">
                             <div class="w-full max-w-lg">
-                                <div class="flex items-center mb-4">
-                                    <div class="w-1/4 h-16 bg-blue-100 rounded-l-lg flex items-center justify-center border-r border-white"><i class="fas fa-handshake text-blue-600 text-2xl"></i></div>
-                                    <div class="w-1/4 h-16 bg-blue-200 flex items-center justify-center border-r border-white"><i class="fas fa-cogs text-blue-700 text-2xl"></i></div>
-                                    <div class="w-1/4 h-16 bg-blue-300 flex items-center justify-center border-r border-white"><i class="fas fa-users-cog text-blue-800 text-2xl"></i></div>
-                                    <div class="w-1/4 h-16 bg-blue-400 rounded-r-lg flex items-center justify-center"><i class="fas fa-bullhorn text-blue-900 text-2xl"></i></div>
-                                </div>
+                                <div class="flex items-center mb-4"><div class="w-1/4 h-12 md:h-16 bg-blue-100 rounded-l-lg flex items-center justify-center border-r border-white"><i class="fas fa-handshake text-blue-600 text-xl md:text-2xl"></i></div><div class="w-1/4 h-12 md:h-16 bg-blue-200 flex items-center justify-center border-r border-white"><i class="fas fa-cogs text-blue-700 text-xl md:text-2xl"></i></div><div class="w-1/4 h-12 md:h-16 bg-blue-300 flex items-center justify-center border-r border-white"><i class="fas fa-users-cog text-blue-800 text-xl md:text-2xl"></i></div><div class="w-1/4 h-12 md:h-16 bg-blue-400 rounded-r-lg flex items-center justify-center"><i class="fas fa-bullhorn text-blue-900 text-xl md:text-2xl"></i></div></div>
                                 <div class="flex items-center justify-center mb-4"><i class="fas fa-arrow-down text-gray-500 text-2xl"></i></div>
-                                <div class="flex items-center mb-4">
-                                    <div class="w-1/3 h-16 bg-green-100 rounded-l-lg flex items-center justify-center border-r border-white"><i class="fas fa-mail-bulk text-green-600 text-2xl"></i></div>
-                                    <div class="w-1/3 h-16 bg-green-200 flex items-center justify-center border-r border-white"><i class="fas fa-chalkboard-teacher text-green-700 text-2xl"></i></div>
-                                    <div class="w-1/3 h-16 bg-green-300 rounded-r-lg flex items-center justify-center"><i class="fas fa-handshake text-green-800 text-2xl"></i></div>
-                                </div>
+                                <div class="flex items-center mb-4"><div class="w-1/3 h-12 md:h-16 bg-green-100 rounded-l-lg flex items-center justify-center border-r border-white"><i class="fas fa-mail-bulk text-green-600 text-xl md:text-2xl"></i></div><div class="w-1/3 h-12 md:h-16 bg-green-200 flex items-center justify-center border-r border-white"><i class="fas fa-chalkboard-teacher text-green-700 text-xl md:text-2xl"></i></div><div class="w-1/3 h-12 md:h-16 bg-green-300 rounded-r-lg flex items-center justify-center"><i class="fas fa-handshake text-green-800 text-xl md:text-2xl"></i></div></div>
                                 <div class="flex items-center justify-center mb-4"><i class="fas fa-arrow-down text-gray-500 text-2xl"></i></div>
-                                <div class="flex items-center">
-                                    <div class="w-1/2 h-16 bg-yellow-100 rounded-l-lg flex items-center justify-center border-r border-white"><i class="fas fa-chart-line text-yellow-600 text-2xl"></i></div>
-                                    <div class="w-1/2 h-16 bg-yellow-200 rounded-r-lg flex items-center justify-center"><i class="fas fa-expand-arrows-alt text-yellow-700 text-2xl"></i></div>
-                                </div>
+                                <div class="flex items-center"><div class="w-1/2 h-12 md:h-16 bg-yellow-100 rounded-l-lg flex items-center justify-center border-r border-white"><i class="fas fa-chart-line text-yellow-600 text-xl md:text-2xl"></i></div><div class="w-1/2 h-12 md:h-16 bg-yellow-200 rounded-r-lg flex items-center justify-center"><i class="fas fa-expand-arrows-alt text-yellow-700 text-xl md:text-2xl"></i></div></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 2</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">2</p></div>
         </div>
     </section>
 
     <section id="slide-3" class="slide-wrapper slide-3">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
                 <h1 class="text-3xl font-bold text-gray-800">フェーズ1：事業基盤構築 概要</h1>
             </div>
-            <div class="flex p-8">
-                <div class="w-1/2 pr-8 pt-4">
-                    <p class="text-lg text-gray-700 mb-8">
-                        フェーズ1では、Google Workspace事業を開始するための基盤を構築します。主に3つの活動領域に集中し、後続フェーズのためのプラットフォームを整備します。
+            <div class="flex flex-col md:flex-row p-4 md:p-8">
+                <div class="w-full md:w-1/2 md:pr-8 pt-4 mb-8 md:mb-0">
+                    <p class="text-base md:text-lg text-gray-700 mb-8">
+                        フェーズ1では、事業開始の基盤を構築します。3つの活動領域に集中し、後続フェーズの土台を整備します。
                     </p>
                     <div class="bg-blue-50 p-5 rounded-lg mb-6 border-l-4 border-blue-500">
                         <h3 class="font-bold text-lg text-blue-700 mb-2">フェーズ1の目標</h3>
-                        <ul class="space-y-2 text-gray-700">
+                        <ul class="space-y-2 text-gray-700 text-sm md:text-base">
                             <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>Google Workspace販売代理店としての正式な体制確立</span></li>
                             <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>高品質なサービス提供のための専門家チーム編成</span></li>
                             <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>マーケティング活動開始のための準備完了</span></li>
                         </ul>
                     </div>
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="font-semibold text-gray-700 mb-2">期間と重要マイルストーン</h3>
-                        <div class="flex items-center mb-3">
-                            <div class="w-1/4 text-center"><p class="text-sm font-medium text-gray-500">開始</p></div>
-                            <div class="w-2/4 h-2 bg-gradient-to-r from-blue-400 to-green-400 rounded-full"></div>
-                            <div class="w-1/4 text-center"><p class="text-sm font-medium text-gray-500">2ヶ月目</p></div>
-                        </div>
-                        <div class="flex text-xs text-gray-500 mb-2">
-                            <div class="w-1/5 text-center">契約開始</div>
-                            <div class="w-1/5 text-center">代理店契約</div>
-                            <div class="w-1/5 text-center">チーム編成</div>
-                            <div class="w-1/5 text-center">サービス定義</div>
-                            <div class="w-1/5 text-center">研修準備</div>
-                        </div>
-                    </div>
                 </div>
-                <div class="w-1/2 pl-8 flex flex-col justify-center">
-                    <div class="space-y-5">
+                <div class="w-full md:w-1/2 md:pl-8 flex flex-col justify-center">
+                    <div class="space-y-4">
                         <div class="activity-box partnership-box shadow-md">
                             <div class="activity-header partnership-header flex items-center"><i class="fas fa-handshake text-white text-xl mr-3"></i><h3 class="font-bold text-lg">パートナーシップ確立</h3></div>
-                            <div class="activity-content"><div class="grid grid-cols-2 gap-3">
+                            <div class="activity-content"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="feature-item"><div class="feature-icon bg-blue-100"><i class="fab fa-google text-blue-600"></i></div><span class="text-sm">Google Workspace代理店契約</span></div>
                                 <div class="feature-item"><div class="feature-icon bg-blue-100"><i class="fas fa-file-contract text-blue-600"></i></div><span class="text-sm">契約書類準備・締結</span></div>
                                 <div class="feature-item"><div class="feature-icon bg-blue-100"><i class="fas fa-building text-blue-600"></i></div><span class="text-sm">ディストリビューター選定</span></div>
@@ -336,7 +267,7 @@
                         </div>
                         <div class="activity-box service-box shadow-md">
                             <div class="activity-header service-header flex items-center"><i class="fas fa-cogs text-white text-xl mr-3"></i><h3 class="font-bold text-lg">サービス・組織体制の構築</h3></div>
-                            <div class="activity-content"><div class="grid grid-cols-2 gap-3">
+                            <div class="activity-content"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="feature-item"><div class="feature-icon bg-green-100"><i class="fas fa-user-tie text-green-600"></i></div><span class="text-sm">フリーランス専門家チーム組成</span></div>
                                 <div class="feature-item"><div class="feature-icon bg-green-100"><i class="fas fa-clipboard-check text-green-600"></i></div><span class="text-sm">品質管理プロセス構築</span></div>
                                 <div class="feature-item"><div class="feature-icon bg-green-100"><i class="fas fa-list-alt text-green-600"></i></div><span class="text-sm">サービスメニュー策定</span></div>
@@ -345,7 +276,7 @@
                         </div>
                         <div class="activity-box marketing-box shadow-md">
                             <div class="activity-header marketing-header flex items-center"><i class="fas fa-bullhorn text-white text-xl mr-3"></i><h3 class="font-bold text-lg">マーケティング準備</h3></div>
-                            <div class="activity-content"><div class="grid grid-cols-2 gap-3">
+                            <div class="activity-content"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="feature-item"><div class="feature-icon bg-yellow-100"><i class="fas fa-chalkboard-teacher text-yellow-600"></i></div><span class="text-sm">AI無料研修企画</span></div>
                                 <div class="feature-item"><div class="feature-icon bg-yellow-100"><i class="fas fa-user-graduate text-yellow-600"></i></div><span class="text-sm">登壇者決定・リハーサル</span></div>
                                 <div class="feature-item"><div class="feature-icon bg-yellow-100"><i class="fas fa-laptop text-yellow-600"></i></div><span class="text-sm">ウェビナーツール選定</span></div>
@@ -355,278 +286,174 @@
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 3</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">3</p></div>
         </div>
     </section>
 
     <section id="slide-4" class="slide-wrapper slide-4">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
                 <h1 class="text-3xl font-bold text-gray-800">フェーズ1：詳細タスク一覧</h1>
             </div>
-            <div class="p-8">
-                <div class="grid grid-cols-3 gap-6">
+            <div class="p-4 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="task-category partner-category p-5">
-                        <div class="flex items-center mb-4"><div class="task-icon partner-icon mr-3"><i class="fas fa-handshake"></i></div><h2 class="text-xl font-bold text-blue-700">パートナーシップ確立</h2></div>
+                        <div class="flex items-center mb-4"><div class="task-icon partner-icon mr-3"><i class="fas fa-handshake"></i></div><h2 class="text-xl font-bold text-blue-700">パートナーシップ</h2></div>
                         <div class="space-y-3">
-                            <div class="task-item p-2 rounded">
-                                <h3 class="font-semibold text-gray-800">Google Workspace代理店契約</h3>
-                                <ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>ディストリビューター選定・交渉</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>申込書類の準備と提出</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>契約内容の精査と締結</span></li>
-                                </ul>
-                            </div>
-                            <div class="task-item p-2 rounded">
-                                <h3 class="font-semibold text-gray-800">IT導入支援事業者との連携</h3>
-                                <ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>連携候補事業者のリストアップ・調査</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>連携協議・コンソーシアム組成</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>連携に関する覚書・契約の締結</span></li>
-                                </ul>
-                            </div>
+                            <div class="task-item p-2 rounded"><h3 class="font-semibold text-gray-800">代理店契約</h3><ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1"><li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>ディストリビューター選定</span></li><li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>申込・契約</span></li></ul></div>
+                            <div class="task-item p-2 rounded"><h3 class="font-semibold text-gray-800">IT事業者連携</h3><ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1"><li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>連携候補リストアップ</span></li><li class="flex items-start"><i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i><span>コンソーシアム組成</span></li></ul></div>
                         </div>
                     </div>
                     <div class="task-category service-category p-5">
-                        <div class="flex items-center mb-4"><div class="task-icon service-icon mr-3"><i class="fas fa-cogs"></i></div><h2 class="text-xl font-bold text-green-700">サービス・組織体制の構築</h2></div>
+                        <div class="flex items-center mb-4"><div class="task-icon service-icon mr-3"><i class="fas fa-cogs"></i></div><h2 class="text-xl font-bold text-green-700">サービス・組織体制</h2></div>
                         <div class="space-y-3">
-                            <div class="task-item p-2 rounded">
-                                <h3 class="font-semibold text-gray-800">フリーランス専門家チーム組成</h3>
-                                <ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>既存ネットワークへのスキル調査</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>採用要件の最終決定</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>外部募集チャネル選定・実施</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>面接・評価プロセスの確立と実施</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>業務委託契約締結</span></li>
-                                </ul>
-                            </div>
-                            <div class="task-item p-2 rounded">
-                                <h3 class="font-semibold text-gray-800">サービスメニュー整備</h3>
-                                <ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>工数ベース価格設定モデル確定</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>各プランのサービス内容定義</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>提案書・見積書等テンプレート作成</span></li>
-                                </ul>
-                            </div>
+                            <div class="task-item p-2 rounded"><h3 class="font-semibold text-gray-800">専門家チーム組成</h3><ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1"><li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>スキル調査</span></li><li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>採用・面接</span></li><li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>業務委託契約</span></li></ul></div>
+                            <div class="task-item p-2 rounded"><h3 class="font-semibold text-gray-800">サービスメニュー</h3><ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1"><li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>価格設定</span></li><li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>プラン内容定義</span></li><li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>提案書テンプレート</span></li></ul></div>
                         </div>
                     </div>
                     <div class="task-category marketing-category p-5">
                         <div class="flex items-center mb-4"><div class="task-icon marketing-icon mr-3"><i class="fas fa-bullhorn"></i></div><h2 class="text-xl font-bold text-yellow-700">マーケティング準備</h2></div>
                         <div class="space-y-3">
-                            <div class="task-item p-2 rounded">
-                                <h3 class="font-semibold text-gray-800">オンラインAI無料研修の企画・準備</h3>
-                                <ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>研修テーマ・アジェンダの決定</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>登壇者の決定とリハーサル</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>ウェビナーツールの選定と契約</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>集客用LPおよび申込フォームの作成</span></li>
-                                </ul>
-                            </div>
-                            <div class="task-item p-2 rounded">
-                                <h3 class="font-semibold text-gray-800">品質管理プロセスの構築</h3>
-                                <ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>オンボーディングプログラム作成</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>業務マニュアル・品質チェックリスト作成</span></li>
-                                </ul>
-                            </div>
+                            <div class="task-item p-2 rounded"><h3 class="font-semibold text-gray-800">無料AI研修の準備</h3><ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1"><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>テーマ決定</span></li><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>登壇者決定</span></li><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>ツール選定</span></li><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>集客用LP作成</span></li></ul></div>
+                            <div class="task-item p-2 rounded"><h3 class="font-semibold text-gray-800">品質管理プロセス</h3><ul class="mt-1 text-sm text-gray-600 pl-5 space-y-1"><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>オンボーディング作成</span></li><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>業務マニュアル作成</span></li></ul></div>
                         </div>
                     </div>
                 </div>
                 <div class="mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <div class="flex items-center"><i class="fas fa-info-circle text-blue-500 text-xl mr-3"></i><p class="text-gray-700">フェーズ1は事業基盤の構築期間として約2ヶ月を想定。パートナーシップ確立、サービス体制構築、マーケティング準備を並行して進行し、フェーズ2へのスムーズな移行を目指します。</p></div>
+                    <div class="flex items-center"><i class="fas fa-info-circle text-blue-500 text-xl mr-3"></i><p class="text-gray-700 text-sm md:text-base">フェーズ1は事業基盤の構築期間として約2ヶ月を想定。各タスクを並行して進行し、フェーズ2へのスムーズな移行を目指します。</p></div>
                 </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 4</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">4</p></div>
         </div>
     </section>
 
     <section id="slide-5" class="slide-wrapper slide-5">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
-                <h1 class="text-3xl font-bold text-gray-800">フェーズ2：テストマーケティング・初期案件獲得 概要</h1>
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
+                <h1 class="text-3xl font-bold text-gray-800">フェーズ2：テストマーケティング・初期案件獲得</h1>
             </div>
-            <div class="flex p-8">
-                <div class="w-1/2 pr-8 pt-4">
-                    <p class="text-lg text-gray-700 mb-8">
-                        フェーズ2では、構築した事業基盤を活用してテストマーケティングを実施し、初期案件の獲得を目指します。既存顧客へのアプローチと無料研修を通じて見込み顧客を発掘します。
+            <div class="flex flex-col md:flex-row p-4 md:p-8">
+                <div class="w-full md:w-1/2 md:pr-8 pt-4 mb-8 md:mb-0">
+                    <p class="text-base md:text-lg text-gray-700 mb-8">
+                        フェーズ2では、テストマーケティングを実施し、初期案件の獲得を目指します。既存顧客へのアプローチと無料研修が見込み客発掘の軸となります。
                     </p>
                     <div class="space-y-6">
-                        <div class="phase-box marketing-box p-4">
-                            <h3 class="font-bold text-lg text-green-700">マーケティング施策</h3>
-                            <ul class="text-gray-700 pl-5 mt-2 space-y-2">
-                                <li class="flex items-start"><i class="fas fa-angle-right text-green-600 mt-1 mr-2"></i><span>既存顧客への先行案内（メールマガジン、営業担当者による個別案内）</span></li>
-                                <li class="flex items-start"><i class="fas fa-angle-right text-green-600 mt-1 mr-2"></i><span>第1回オンラインAI無料研修の集客と実施</span></li>
-                                <li class="flex items-start"><i class="fas fa-angle-right text-green-600 mt-1 mr-2"></i><span>アンケート回収と分析による見込み客の特定</span></li>
-                            </ul>
-                        </div>
-                        <div class="phase-box acquisition-box p-4">
-                            <h3 class="font-bold text-lg text-yellow-700">初期案件獲得・サービス提供</h3>
-                            <ul class="text-gray-700 pl-5 mt-2 space-y-2">
-                                <li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>研修参加者へのフォローアップと個別相談会の実施</span></li>
-                                <li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>課題ヒアリングとソリューション提案活動</span></li>
-                                <li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>初期案件の契約締結とプロジェクト開始</span></li>
-                                <li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>品質管理プロセスの実践とフィードバック収集</span></li>
-                            </ul>
-                        </div>
+                        <div class="phase-box marketing-box p-4"><h3 class="font-bold text-lg text-green-700">マーケティング施策</h3><ul class="text-gray-700 pl-5 mt-2 space-y-2 text-sm md:text-base">
+                            <li class="flex items-start"><i class="fas fa-angle-right text-green-600 mt-1 mr-2"></i><span>既存顧客への先行案内</span></li><li class="flex items-start"><i class="fas fa-angle-right text-green-600 mt-1 mr-2"></i><span>第1回オンラインAI無料研修の実施</span></li><li class="flex items-start"><i class="fas fa-angle-right text-green-600 mt-1 mr-2"></i><span>アンケート分析による見込み客特定</span></li></ul></div>
+                        <div class="phase-box acquisition-box p-4"><h3 class="font-bold text-lg text-yellow-700">初期案件獲得・サービス提供</h3><ul class="text-gray-700 pl-5 mt-2 space-y-2 text-sm md:text-base">
+                            <li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>個別相談会の実施</span></li><li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>課題ヒアリングと提案</span></li><li class="flex items-start"><i class="fas fa-angle-right text-yellow-600 mt-1 mr-2"></i><span>初期案件の契約とプロジェクト開始</span></li></ul></div>
                     </div>
                 </div>
-                <div class="w-1/2 pl-8 flex flex-col justify-center">
-                    <div class="bg-gray-50 rounded-lg p-6 shadow-md">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-8 text-center">マーケティングから案件獲得までのフロー</h3>
-                        <div class="space-y-4">
+                <div class="w-full md:w-1/2 md:pl-8 flex flex-col justify-center">
+                    <div class="bg-gray-50 rounded-lg p-4 md:p-6 shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-8 text-center">案件獲得までのフロー</h3>
+                        <div class="space-y-2 md:space-y-4">
                             <div class="flex flex-col items-center">
-                                <div class="flex justify-center w-full mb-4"><div class="process-box bg-green-100 w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">1</div></div><h4 class="font-semibold text-green-700">既存顧客へのアプローチ</h4><p class="text-sm text-gray-600 mt-1">メールマガジン配信・営業担当者による案内</p></div></div>
-                                <i class="fas fa-arrow-down process-arrow mb-4"></i>
-                                <div class="flex justify-center w-full mb-4"><div class="process-box bg-green-200 w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">2</div></div><h4 class="font-semibold text-green-800">オンラインAI無料研修の実施</h4><p class="text-sm text-gray-600 mt-1">集客活動・ウェビナー実施・アンケート回収</p></div></div>
-                                <i class="fas fa-arrow-down process-arrow mb-4"></i>
-                                <div class="flex justify-center w-full mb-4"><div class="process-box bg-yellow-100 w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold">3</div></div><h4 class="font-semibold text-yellow-700">個別相談会の実施</h4><p class="text-sm text-gray-600 mt-1">課題ヒアリング・ソリューション提案</p></div></div>
-                                <i class="fas fa-arrow-down process-arrow mb-4"></i>
-                                <div class="flex justify-center w-full"><div class="process-box bg-yellow-200 w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-10 h-10 rounded-full bg-yellow-600 flex items-center justify-center text-white font-bold">4</div></div><h4 class="font-semibold text-yellow-800">初期案件獲得・サービス提供</h4><p class="text-sm text-gray-600 mt-1">契約・フリーランスアサイン・プロジェクト開始</p></div></div>
+                                <div class="process-box bg-green-100 w-full md:w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">1</div></div><h4 class="font-semibold text-green-700">既存顧客アプローチ</h4></div>
+                                <i class="fas fa-arrow-down process-arrow my-2"></i>
+                                <div class="process-box bg-green-200 w-full md:w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">2</div></div><h4 class="font-semibold text-green-800">オンラインAI研修</h4></div>
+                                <i class="fas fa-arrow-down process-arrow my-2"></i>
+                                <div class="process-box bg-yellow-100 w-full md:w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold">3</div></div><h4 class="font-semibold text-yellow-700">個別相談会</h4></div>
+                                <i class="fas fa-arrow-down process-arrow my-2"></i>
+                                <div class="process-box bg-yellow-200 w-full md:w-3/4"><div class="flex items-center justify-center mb-2"><div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-yellow-600 flex items-center justify-center text-white font-bold">4</div></div><h4 class="font-semibold text-yellow-800">初期案件獲得</h4></div>
                             </div>
-                        </div>
-                        <div class="mt-8 bg-white p-4 rounded-lg border border-gray-200">
-                            <h4 class="font-semibold text-gray-800 flex items-center mb-2"><i class="fas fa-chart-line text-green-600 mr-2"></i>期待される成果</h4>
-                            <ul class="text-sm text-gray-700 space-y-1">
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>初期顧客 3〜5社の獲得</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>サービス品質・プロセスの検証</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i><span>顧客ニーズのさらなる把握</span></li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 5</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">5</p></div>
         </div>
     </section>
 
     <section id="slide-6" class="slide-wrapper slide-6">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
                 <h1 class="text-3xl font-bold text-gray-800">フェーズ2：詳細タスク一覧</h1>
             </div>
-            <div class="p-8">
-                <div class="grid grid-cols-2 gap-8">
+            <div class="p-4 md:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="task-category marketing-category p-5">
                         <div class="flex items-center mb-4"><div class="task-icon marketing-icon mr-3"><i class="fas fa-bullhorn"></i></div><h2 class="text-xl font-bold text-yellow-700">マーケティング施策</h2></div>
                         <div class="space-y-4">
-                            <div class="task-item p-3 rounded">
-                                <h3 class="font-semibold text-gray-800">既存顧客への先行案内</h3>
-                                <ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>案内用メールマガジンの作成と配信</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>RPO事業の営業担当者による個別案内の実施</span></li>
-                                </ul>
-                            </div>
-                            <div class="task-item p-3 rounded">
-                                <h3 class="font-semibold text-gray-800">第1回オンラインAI無料研修の実施</h3>
-                                <ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>集客活動の実施（SNS告知、メール配信等）</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>ウェビナーの実施とアンケート回収</span></li>
-                                    <li class="flex items-start"><i class="fas fa-lightbulb text-yellow-600 mt-1 mr-2"></i><span>参加者データベースの構築と分析</span></li>
-                                </ul>
-                            </div>
+                            <div class="task-item p-3 rounded"><h3 class="font-semibold text-gray-800">既存顧客への先行案内</h3><ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2"><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>案内用メールマガジンの作成と配信</span></li><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>RPO事業の営業担当者による個別案内</span></li></ul></div>
+                            <div class="task-item p-3 rounded"><h3 class="font-semibold text-gray-800">第1回オンラインAI無料研修</h3><ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2"><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>集客活動の実施（SNS、メール）</span></li><li class="flex items-start"><i class="fas fa-check-circle text-yellow-600 mt-1 mr-2"></i><span>ウェビナー実施とアンケート回収</span></li></ul></div>
                             <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100 mt-4">
-                                <div class="flex items-start"><i class="fas fa-star text-yellow-500 mt-1 mr-2"></i><div><h4 class="font-medium text-yellow-800">マーケティング指標</h4><ul class="mt-1 text-sm text-gray-700 space-y-1"><li>・メールマガジン開封率: 目標25%以上</li><li>・研修参加申込数: 目標50名以上</li><li>・研修参加率: 申込者の70%以上</li><li>・アンケート回収率: 参加者の80%以上</li></ul></div></div>
+                                <div class="flex items-start"><i class="fas fa-star text-yellow-500 mt-1 mr-2"></i><div><h4 class="font-medium text-yellow-800">マーケティング指標</h4><ul class="mt-1 text-sm text-gray-700 space-y-1"><li>メールマガジン開封率: 25%</li><li>研修参加申込数: 50名</li><li>アンケート回収率: 80%</li></ul></div></div>
                             </div>
                         </div>
                     </div>
                     <div class="task-category acquisition-category p-5">
-                        <div class="flex items-center mb-4"><div class="task-icon acquisition-icon mr-3"><i class="fas fa-handshake"></i></div><h2 class="text-xl font-bold text-red-700">初期案件獲得・サービス提供</h2></div>
+                        <div class="flex items-center mb-4"><div class="task-icon acquisition-icon mr-3"><i class="fas fa-handshake"></i></div><h2 class="text-xl font-bold text-red-700">初期案件獲得</h2></div>
                         <div class="space-y-4">
-                            <div class="task-item p-3 rounded">
-                                <h3 class="font-semibold text-gray-800">個別相談会の実施</h3>
-                                <ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>研修参加者へのフォローアップと個別相談への誘導</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>課題ヒアリングとソリューション提案活動</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>優先度の高い見込み顧客の選定と集中フォロー</span></li>
-                                </ul>
-                            </div>
-                            <div class="task-item p-3 rounded">
-                                <h3 class="font-semibold text-gray-800">初期案件の契約とプロジェクト開始</h3>
-                                <ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>契約手続きの実施（提案書・見積書の作成と提出）</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>担当フリーランスのアサインとキックオフMTGの開催</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>サービス提供と品質管理プロセスの実践</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>進捗管理と定期的な顧客報告体制の確立</span></li>
-                                </ul>
-                            </div>
+                            <div class="task-item p-3 rounded"><h3 class="font-semibold text-gray-800">個別相談会の実施</h3><ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2"><li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>研修参加者へフォローアップ</span></li><li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>課題ヒアリングと提案</span></li></ul></div>
+                            <div class="task-item p-3 rounded"><h3 class="font-semibold text-gray-800">初期案件の契約と開始</h3><ul class="mt-2 text-sm text-gray-600 pl-5 space-y-2"><li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>契約手続き</span></li><li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>担当フリーランスのアサイン</span></li><li class="flex items-start"><i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i><span>進捗管理と報告体制の確立</span></li></ul></div>
                             <div class="bg-red-50 p-3 rounded-lg border border-red-100 mt-4">
-                                <div class="flex items-start"><i class="fas fa-chart-line text-red-500 mt-1 mr-2"></i><div><h4 class="font-medium text-red-800">初期案件獲得目標</h4><ul class="mt-1 text-sm text-gray-700 space-y-1"><li>・相談会実施数: 研修参加者の30%以上</li><li>・初期契約件数: 5件以上</li><li>・平均案件単価: 100万円以上</li><li>・顧客満足度: 4.0/5.0以上</li></ul></div></div>
+                                <div class="flex items-start"><i class="fas fa-chart-line text-red-500 mt-1 mr-2"></i><div><h4 class="font-medium text-red-800">初期案件獲得目標</h4><ul class="mt-1 text-sm text-gray-700 space-y-1"><li>相談会実施数: 研修参加者の30%</li><li>初期契約件数: 5件</li><li>顧客満足度: 4.0/5.0</li></ul></div></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <div class="flex items-center"><i class="fas fa-info-circle text-blue-500 text-xl mr-3"></i><p class="text-gray-700">フェーズ2は約3〜4ヶ月間を想定し、マーケティング施策の実行から初期案件の獲得・遂行までを行います。この期間で得られた知見をもとに、フェーズ3での本格展開に向けたサービス改善を実施します。</p></div>
-                </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 6</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">6</p></div>
         </div>
     </section>
 
     <section id="slide-7" class="slide-wrapper slide-7">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
-                <h1 class="text-3xl font-bold text-gray-800">フェーズ3：事業本格展開・拡大 概要</h1>
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
+                <h1 class="text-3xl font-bold text-gray-800">フェーズ3：事業本格展開・拡大</h1>
             </div>
-            <div class="flex p-8">
-                <div class="w-1/2 pr-8 pt-4">
-                    <p class="text-lg text-gray-700 mb-8">フェーズ3では、初期案件の成功を基盤に、事業の本格的な運営体制の確立と拡大戦略の展開を並行して進めます。</p>
+            <div class="flex flex-col md:flex-row p-4 md:p-8">
+                <div class="w-full md:w-1/2 md:pr-8 pt-4 mb-8 md:mb-0">
+                    <p class="text-base md:text-lg text-gray-700 mb-8">フェーズ3では、初期案件の成功を基盤に、事業の本格的な運営と拡大戦略を並行して進めます。</p>
                     <div class="space-y-6">
-                        <div class="phase-box phase-3a p-4"><h3 class="font-bold text-lg text-yellow-700">事業運営の本格化</h3><p class="text-gray-700">定期的な事業レビュー、KPI進捗確認、顧客満足度分析、フリーランスFB収集、オンライン研修の定例化などを通して運営基盤を強化します。</p></div>
-                        <div class="phase-box phase-3b p-4"><h3 class="font-bold text-lg text-red-700">事業拡大戦略</h3><p class="text-gray-700">Web広告開始、パートナーアライアンス構築、導入事例創出・横展開、フリーランスコミュニティ化などによって事業規模の拡大を図ります。</p></div>
-                    </div>
-                    <div class="mt-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div class="flex items-start"><i class="fas fa-lightbulb text-yellow-500 text-xl mt-1 mr-3"></i><div><h4 class="font-semibold text-gray-800">成功のポイント</h4><p class="text-sm text-gray-700">初期の成功事例を効果的に活用し、顧客満足度とフリーランスの品質を継続的に向上させることが、事業の持続的な成長の鍵となります。</p></div></div>
+                        <div class="phase-box phase-3a p-4"><h3 class="font-bold text-lg text-yellow-700">事業運営の本格化</h3><p class="text-gray-700 text-sm md:text-base">定期的な事業レビュー、KPI進捗確認、顧客満足度分析、オンライン研修の定例化などを通して運営基盤を強化します。</p></div>
+                        <div class="phase-box phase-3b p-4"><h3 class="font-bold text-lg text-red-700">事業拡大戦略</h3><p class="text-gray-700 text-sm md:text-base">Web広告開始、パートナーアライアンス構築、導入事例創出、フリーランスコミュニティ化などで事業規模の拡大を図ります。</p></div>
                     </div>
                 </div>
-                <div class="w-1/2 pl-8 flex flex-col justify-center">
-                    <div class="bg-gray-50 rounded-lg p-6 shadow-md">
+                <div class="w-full md:w-1/2 md:pl-8 flex flex-col justify-center">
+                    <div class="bg-gray-50 rounded-lg p-4 md:p-6 shadow-md">
                         <h3 class="text-lg font-semibold text-gray-800 mb-6 text-center">事業本格展開・拡大の2軸戦略</h3>
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="strategy-card bg-yellow-50 p-4 flex flex-col items-center"><div class="circle-icon bg-yellow-100 mb-3"><i class="fas fa-chart-line text-yellow-600 text-2xl"></i></div><h4 class="font-semibold text-yellow-700 text-center">定期的な事業レビュー</h4><p class="text-sm text-center text-gray-600 mt-2">KGI/KPI進捗確認、顧客満足度分析、プロセス改善</p></div>
-                            <div class="strategy-card bg-red-50 p-4 flex flex-col items-center"><div class="circle-icon bg-red-100 mb-3"><i class="fas fa-bullhorn text-red-600 text-2xl"></i></div><h4 class="font-semibold text-red-700 text-center">新規顧客マーケティング</h4><p class="text-sm text-center text-gray-600 mt-2">Web広告、コンテンツマーケティング、アライアンス構築</p></div>
-                            <div class="strategy-card bg-yellow-50 p-4 flex flex-col items-center"><div class="circle-icon bg-yellow-100 mb-3"><i class="fas fa-chalkboard-teacher text-yellow-600 text-2xl"></i></div><h4 class="font-semibold text-yellow-700 text-center">オンライン研修の定例化</h4><p class="text-sm text-center text-gray-600 mt-2">研修テーマ拡充、定期開催スケジュール確立</p></div>
-                            <div class="strategy-card bg-red-50 p-4 flex flex-col items-center"><div class="circle-icon bg-red-100 mb-3"><i class="fas fa-briefcase text-red-600 text-2xl"></i></div><h4 class="font-semibold text-red-700 text-center">導入事例の創出と横展開</h4><p class="text-sm text-center text-gray-600 mt-2">成功事例コンテンツ化、営業資料活用、Web公開</p></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div class="strategy-card bg-yellow-50 p-4 flex flex-col items-center"><div class="circle-icon bg-yellow-100 mb-3"><i class="fas fa-chart-line text-yellow-600 text-2xl"></i></div><h4 class="font-semibold text-yellow-700 text-center text-sm md:text-base">定期的な事業レビュー</h4></div>
+                            <div class="strategy-card bg-red-50 p-4 flex flex-col items-center"><div class="circle-icon bg-red-100 mb-3"><i class="fas fa-bullhorn text-red-600 text-2xl"></i></div><h4 class="font-semibold text-red-700 text-center text-sm md:text-base">新規顧客マーケティング</h4></div>
+                            <div class="strategy-card bg-yellow-50 p-4 flex flex-col items-center"><div class="circle-icon bg-yellow-100 mb-3"><i class="fas fa-chalkboard-teacher text-yellow-600 text-2xl"></i></div><h4 class="font-semibold text-yellow-700 text-center text-sm md:text-base">オンライン研修の定例化</h4></div>
+                            <div class="strategy-card bg-red-50 p-4 flex flex-col items-center"><div class="circle-icon bg-red-100 mb-3"><i class="fas fa-briefcase text-red-600 text-2xl"></i></div><h4 class="font-semibold text-red-700 text-center text-sm md:text-base">導入事例の創出と横展開</h4></div>
                         </div>
                         <div class="bg-gradient-to-r from-yellow-100 to-red-100 p-4 rounded-lg mt-4">
-                            <div class="flex items-center"><div class="circle-icon bg-white mr-4 flex-shrink-0"><i class="fas fa-users text-purple-600 text-2xl"></i></div><div><h4 class="font-semibold text-gray-800">フリーランス採用の継続とコミュニティ化</h4><p class="text-sm text-gray-600 mt-1">継続的な人材確保と品質向上のため、フリーランス向けイベントを企画・実施し、帰属意識を高めるコミュニティを形成します。</p></div></div>
-                        </div>
-                        <div class="mt-6 flex justify-between items-center px-4">
-                            <div class="text-center"><div class="w-3 h-3 bg-yellow-500 rounded-full mx-auto"></div><p class="text-xs text-gray-500 mt-1">6-7ヶ月目</p><p class="text-xs font-medium">開始</p></div>
-                            <div class="flex-grow mx-2 h-1 bg-gradient-to-r from-yellow-300 to-red-300"></div>
-                            <div class="text-center"><div class="w-3 h-3 bg-red-500 rounded-full mx-auto"></div><p class="text-xs text-gray-500 mt-1">12ヶ月目〜</p><p class="text-xs font-medium">事業安定化</p></div>
+                            <div class="flex items-center"><div class="circle-icon bg-white mr-4 flex-shrink-0"><i class="fas fa-users text-purple-600 text-2xl"></i></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">フリーランス採用とコミュニティ化</h4><p class="text-xs text-gray-600 mt-1">継続的な人材確保と品質向上のため、コミュニティを形成します。</p></div></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 7</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">7</p></div>
         </div>
     </section>
 
     <section id="slide-8" class="slide-wrapper slide-8">
         <div class="slide-container" style="background-color: white;">
-            <div class="slide-header py-6 px-12">
+            <div class="slide-header py-4 px-6 md:py-6 md:px-12">
                 <h1 class="text-3xl font-bold text-gray-800">まとめ・次のステップ</h1>
             </div>
-            <div class="p-8">
-                <div class="grid grid-cols-2 gap-8">
+            <div class="p-4 md:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div>
                         <div class="mb-6">
                             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-calendar-alt text-blue-600 mr-2"></i>3フェーズ全体スケジュール</h2>
                             <div class="space-y-1">
-                                <div class="schedule-item flex"><div class="schedule-line"></div><div class="schedule-dot phase-1-color mr-4 shrink-0"><i class="fas fa-handshake"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-blue-700">フェーズ1：事業基盤構築</h3><p class="text-sm text-gray-600">1-2ヶ月目：パートナーシップ確立、サービス体制構築</p></div></div>
-                                <div class="schedule-item flex"><div class="schedule-line"></div><div class="schedule-dot phase-2-color mr-4 shrink-0"><i class="fas fa-bullhorn"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-green-700">フェーズ2：テストマーケティング・初期案件獲得</h3><p class="text-sm text-gray-600">3-5ヶ月目：既存顧客アプローチ、AI研修、初期案件獲得</p></div></div>
-                                <div class="schedule-item flex"><div class="schedule-line"></div><div class="schedule-dot phase-3-color mr-4 shrink-0"><i class="fas fa-chart-line"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-yellow-700">フェーズ3：事業本格展開・拡大</h3><p class="text-sm text-gray-600">6-11ヶ月目：事業運営本格化、マーケティング拡大</p></div></div>
-                                <div class="schedule-item flex"><div class="schedule-dot expansion-color mr-4 shrink-0"><i class="fas fa-expand-arrows-alt"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-red-700">事業安定化・さらなる拡大</h3><p class="text-sm text-gray-600">12ヶ月目〜：導入事例の横展開、新規サービス開発</p></div></div>
+                                <div class="schedule-item flex"><div class="schedule-line"></div><div class="schedule-dot phase-1-color mr-4 shrink-0"><i class="fas fa-handshake"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-blue-700 text-sm md:text-base">フェーズ1：事業基盤構築 (1-2ヶ月)</h3></div></div>
+                                <div class="schedule-item flex"><div class="schedule-line"></div><div class="schedule-dot phase-2-color mr-4 shrink-0"><i class="fas fa-bullhorn"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-green-700 text-sm md:text-base">フェーズ2：テストマーケティング (3-5ヶ月)</h3></div></div>
+                                <div class="schedule-item flex"><div class="schedule-line"></div><div class="schedule-dot phase-3-color mr-4 shrink-0"><i class="fas fa-chart-line"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-yellow-700 text-sm md:text-base">フェーズ3：事業本格展開 (6-11ヶ月)</h3></div></div>
+                                <div class="schedule-item flex"><div class="schedule-dot expansion-color mr-4 shrink-0"><i class="fas fa-expand-arrows-alt"></i></div><div class="bg-gray-50 rounded p-3 flex-grow"><h3 class="font-semibold text-red-700 text-sm md:text-base">事業安定化・拡大 (12ヶ月〜)</h3></div></div>
                             </div>
                         </div>
                         <div>
                             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-key text-green-600 mr-2"></i>重要な成功要素</h2>
                             <div class="space-y-3">
-                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center"><i class="fas fa-users mr-2"></i>高品質な専門家チームの確保</h3><p class="text-sm text-gray-700 mt-1">Google Workspace導入支援のスキルと経験を持つフリーランスの採用と育成がサービス品質の要</p></div>
-                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center"><i class="fas fa-hands-helping mr-2"></i>戦略的パートナーシップの構築</h3><p class="text-sm text-gray-700 mt-1">Google、IT導入支援事業者、顧客企業との良好な関係構築による案件創出</p></div>
-                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center"><i class="fas fa-chart-pie mr-2"></i>差別化されたマーケティング戦略</h3><p class="text-sm text-gray-700 mt-1">AI研修等の無料価値提供からの案件化プロセスを確立し、継続的な案件獲得ルートを構築</p></div>
-                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center"><i class="fas fa-tasks mr-2"></i>明確なサービス体系と品質管理</h3><p class="text-sm text-gray-700 mt-1">顧客ニーズに応じた柔軟なサービスメニューと厳格な品質管理プロセスの確立</p></div>
+                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center text-sm md:text-base"><i class="fas fa-users mr-2"></i>高品質な専門家チームの確保</h3></div>
+                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center text-sm md:text-base"><i class="fas fa-hands-helping mr-2"></i>戦略的パートナーシップの構築</h3></div>
+                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center text-sm md:text-base"><i class="fas fa-chart-pie mr-2"></i>差別化されたマーケティング戦略</h3></div>
+                                <div class="success-factor bg-blue-50 p-3 rounded"><h3 class="font-semibold text-blue-700 flex items-center text-sm md:text-base"><i class="fas fa-tasks mr-2"></i>明確なサービス体系と品質管理</h3></div>
                             </div>
                         </div>
                     </div>
@@ -635,63 +462,63 @@
                         <div class="bg-gray-50 rounded-lg p-5 shadow-sm">
                             <div class="space-y-6">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">短期アクション（〜1ヶ月）</h3>
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">短期（〜1ヶ月）</h3>
                                     <div class="space-y-2">
-                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3"><span class="text-blue-700 font-semibold">1</span></div><div><h4 class="font-semibold text-gray-800">Google Workspace代理店契約の締結準備</h4><p class="text-sm text-gray-600">ディストリビューター選定、申込条件の確認と必要書類の準備</p></div></div>
-                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3"><span class="text-blue-700 font-semibold">2</span></div><div><h4 class="font-semibold text-gray-800">初期フリーランスチーム採用計画策定</h4><p class="text-sm text-gray-600">必要スキルの定義、募集要項作成、採用チャネル選定</p></div></div>
+                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3"><span class="text-blue-700 font-semibold">1</span></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">代理店契約の締結準備</h4></div></div>
+                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3"><span class="text-blue-700 font-semibold">2</span></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">初期フリーランス採用計画</h4></div></div>
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">中期アクション（1〜3ヶ月）</h3>
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">中期（1〜3ヶ月）</h3>
                                     <div class="space-y-2">
-                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3"><span class="text-green-700 font-semibold">3</span></div><div><h4 class="font-semibold text-gray-800">第1回AI無料研修の企画・実施</h4><p class="text-sm text-gray-600">アジェンダ確定、集客準備、登壇者選定、ウェビナー実施</p></div></div>
-                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3"><span class="text-green-700 font-semibold">4</span></div><div><h4 class="font-semibold text-gray-800">初期案件獲得活動開始</h4><p class="text-sm text-gray-600">既存顧客へのアプローチ、個別相談会実施、提案活動</p></div></div>
+                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3"><span class="text-green-700 font-semibold">3</span></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">第1回AI無料研修の企画・実施</h4></div></div>
+                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3"><span class="text-green-700 font-semibold">4</span></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">初期案件獲得活動の開始</h4></div></div>
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">長期アクション（4〜12ヶ月）</h3>
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">長期（4〜12ヶ月）</h3>
                                     <div class="space-y-2">
-                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3"><span class="text-yellow-700 font-semibold">5</span></div><div><h4 class="font-semibold text-gray-800">マーケティング拡大と導入事例創出</h4><p class="text-sm text-gray-600">Webマーケティング開始、成功事例のコンテンツ化、横展開</p></div></div>
-                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3"><span class="text-yellow-700 font-semibold">6</span></div><div><h4 class="font-semibold text-gray-800">フリーランスコミュニティの構築</h4><p class="text-sm text-gray-600">継続的な採用、コミュニティイベント実施、ナレッジ共有</p></div></div>
+                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3"><span class="text-yellow-700 font-semibold">5</span></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">マーケティング拡大と導入事例創出</h4></div></div>
+                                        <div class="action-item flex items-start p-2 rounded"><div class="shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-3"><span class="text-yellow-700 font-semibold">6</span></div><div><h4 class="font-semibold text-gray-800 text-sm md:text-base">フリーランスコミュニティの構築</h4></div></div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mt-6 border-t border-gray-200 pt-4">
-                                <div class="flex items-center"><i class="fas fa-sync-alt text-blue-600 text-lg mr-3"></i><h3 class="font-semibold text-gray-800">計画見直しポイント</h3></div>
-                                <p class="text-sm text-gray-600 mt-2">各フェーズ終了時に事業KPIとマイルストーン達成状況を評価し、次フェーズの詳細計画を調整。四半期ごとの戦略レビューと年次の事業計画更新を実施。</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">Google Workspace事業開発計画 | 8</p></div>
+            <div class="absolute bottom-4 right-8"><p class="text-sm text-gray-400">8</p></div>
         </div>
     </section>
 
     <script>
-        // スクロール位置に応じてナビゲーションのアクティブ状態を更新
         document.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.slide-wrapper');
             const navLinks = document.querySelectorAll('.navbar a');
 
+            if (!sections.length || !navLinks.length) return;
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
+                        const activeId = entry.target.id;
                         navLinks.forEach(link => {
                             link.classList.remove('active');
-                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            if (link.getAttribute('href') === `#${activeId}`) {
                                 link.classList.add('active');
                             }
                         });
                     }
                 });
-            }, { rootMargin: '-50% 0px -50% 0px' });
+            }, { 
+                rootMargin: '-50% 0px -50% 0px',
+                threshold: 0
+            });
 
             sections.forEach(section => {
                 observer.observe(section);
             });
         });
     </script>
-
 </body>
 </html>
